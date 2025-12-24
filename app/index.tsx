@@ -24,16 +24,19 @@ export default function Home() {
     isLoading,
     error,
     lastUpdated,
+    isHydrated,
     setSelectedSido,
     setSelectedItem,
     fetchData,
     refresh,
   } = useAirQualityStore();
 
-  // 초기 데이터 로드
+  // 저장된 상태가 로드된 후 데이터 가져오기
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isHydrated) {
+      fetchData();
+    }
+  }, [isHydrated]);
 
   // 등급 정보
   const gradeInfo = getGradeInfo(selectedItem?.khaiGrade || null);
