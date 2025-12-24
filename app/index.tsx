@@ -17,6 +17,7 @@ import { SidoPicker } from '@/components/SidoPicker';
 import { StationPicker } from '@/components/StationPicker';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useLanguageStore } from '@/store/languageStore';
+import { useThemeStore, themes } from '@/store/themeStore';
 
 export default function Home() {
   const {
@@ -34,6 +35,8 @@ export default function Home() {
   } = useAirQualityStore();
 
   const { language, t } = useLanguageStore();
+  const { theme, toggleTheme } = useThemeStore();
+  const colors = themes[theme];
 
   // 저장된 상태가 로드된 후 데이터 가져오기
   useEffect(() => {
@@ -140,13 +143,13 @@ export default function Home() {
   }));
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
       <Stack.Screen options={{ headerShown: false }} />
       <View className="flex-1 px-5">
         {/* Header */}
         <View className="flex-row items-start justify-between mt-2">
           <View>
-            <Text className="text-3xl font-bold text-gray-800">AirCheck</Text>
+            <Text className="text-3xl font-bold" style={{ color: colors.headerText }}>AirCheck</Text>
             <View className="flex-row items-center gap-3 mt-1">
               <SidoPicker
                 selectedSido={selectedSido}
@@ -161,8 +164,12 @@ export default function Home() {
           </View>
           <View className="flex-row items-center gap-4 mt-2">
             <LanguageSelector />
-            <TouchableOpacity>
-              <Ionicons name="moon-outline" size={22} color="#374151" />
+            <TouchableOpacity onPress={toggleTheme}>
+              <Ionicons
+                name={theme === 'light' ? 'moon-outline' : 'sunny-outline'}
+                size={22}
+                color={colors.iconColor}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -178,7 +185,7 @@ export default function Home() {
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#4ade80" />
-            <Text className="text-gray-500 mt-4">{t('loadingData')}</Text>
+            <Text className="mt-4" style={{ color: colors.textSecondary }}>{t('loadingData')}</Text>
           </View>
         ) : (
           <>
@@ -207,70 +214,72 @@ export default function Home() {
             {/* PM Values */}
             <View className="flex-row mt-8 gap-3">
               <View
-                className="bg-white rounded-2xl items-center justify-center flex-1 py-6 shadow-sm"
+                className="rounded-2xl items-center justify-center flex-1 py-6 shadow-sm"
                 style={{
-                  shadowColor: '#000',
+                  backgroundColor: colors.cardBg,
+                  shadowColor: theme === 'light' ? '#000' : '#000',
                   shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
+                  shadowOpacity: theme === 'light' ? 0.1 : 0.3,
                   shadowRadius: 8,
                   elevation: 3,
                 }}
               >
                 <View className="flex-row items-center gap-1">
-                  <Text className="text-gray-600 text-sm">{t('pm10')}</Text>
+                  <Text className="text-sm" style={{ color: colors.textSecondary }}>{t('pm10')}</Text>
                   <View
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: pm10GradeInfo.color }}
                   />
                 </View>
-                <Text className="text-gray-800 text-4xl font-bold mt-2">
+                <Text className="text-4xl font-bold mt-2" style={{ color: colors.text }}>
                   {selectedItem?.pm10Value || '-'}
                 </Text>
-                <Text className="text-gray-500 text-sm mt-2">{t('unit')}</Text>
+                <Text className="text-sm mt-2" style={{ color: colors.textSecondary }}>{t('unit')}</Text>
               </View>
               <View
-                className="bg-white rounded-2xl items-center justify-center flex-1 py-6 shadow-sm"
+                className="rounded-2xl items-center justify-center flex-1 py-6 shadow-sm"
                 style={{
-                  shadowColor: '#000',
+                  backgroundColor: colors.cardBg,
+                  shadowColor: theme === 'light' ? '#000' : '#000',
                   shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
+                  shadowOpacity: theme === 'light' ? 0.1 : 0.3,
                   shadowRadius: 8,
                   elevation: 3,
                 }}
               >
                 <View className="flex-row items-center gap-1">
-                  <Text className="text-gray-600 text-sm">{t('pm25')}</Text>
+                  <Text className="text-sm" style={{ color: colors.textSecondary }}>{t('pm25')}</Text>
                   <View
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: pm25GradeInfo.color }}
                   />
                 </View>
-                <Text className="text-gray-800 text-4xl font-bold mt-2">
+                <Text className="text-4xl font-bold mt-2" style={{ color: colors.text }}>
                   {selectedItem?.pm25Value || '-'}
                 </Text>
-                <Text className="text-gray-500 text-sm mt-2">{t('unit')}</Text>
+                <Text className="text-sm mt-2" style={{ color: colors.textSecondary }}>{t('unit')}</Text>
               </View>
             </View>
 
             {/* Recommendation Card */}
             <View
-              className="bg-blue-50 rounded-2xl mt-8 py-8 px-6 relative overflow-hidden"
-              style={{ borderRadius: 20 }}
+              className="rounded-2xl mt-8 py-8 px-6 relative overflow-hidden"
+              style={{ borderRadius: 20, backgroundColor: colors.recommendationBg }}
             >
               {/* Animated Cloud decorations */}
               <Animated.View className="absolute top-1 opacity-30" style={cloud1Style}>
-                <Ionicons name="cloud" size={55} color="#94a3b8" />
+                <Ionicons name="cloud" size={55} color={colors.cloudColor} />
               </Animated.View>
               <Animated.View className="absolute top-3 opacity-20" style={cloud2Style}>
-                <Ionicons name="cloud" size={40} color="#94a3b8" />
+                <Ionicons name="cloud" size={40} color={colors.cloudColor} />
               </Animated.View>
               <Animated.View className="absolute bottom-1 opacity-30" style={cloud3Style}>
-                <Ionicons name="cloud" size={60} color="#94a3b8" />
+                <Ionicons name="cloud" size={60} color={colors.cloudColor} />
               </Animated.View>
               <Animated.View className="absolute bottom-4 opacity-25" style={cloud4Style}>
-                <Ionicons name="cloud" size={35} color="#94a3b8" />
+                <Ionicons name="cloud" size={35} color={colors.cloudColor} />
               </Animated.View>
-              <Text className="text-center text-gray-700 text-base z-10">
+              <Text className="text-center text-base z-10" style={{ color: colors.text }}>
                 {recommendation.text}{' '}
                 <Text style={{ color: gradeInfo.color }} className="font-semibold">
                   {recommendation.highlight}
@@ -281,7 +290,7 @@ export default function Home() {
 
             {/* Data Time */}
             {selectedItem?.dataTime && (
-              <Text className="text-gray-400 text-xs text-center mt-3">
+              <Text className="text-xs text-center mt-3" style={{ color: colors.textMuted }}>
                 {t('measurementTime')}: {selectedItem.dataTime}
               </Text>
             )}
@@ -290,14 +299,17 @@ export default function Home() {
 
         {/* Footer */}
         <View className="flex-row items-center justify-between mt-auto mb-4">
-          <Text className="text-gray-400 text-sm">
+          <Text className="text-sm" style={{ color: colors.textMuted }}>
             {t('lastUpdate')}: {formatLastUpdated()}
           </Text>
           <TouchableOpacity
             onPress={refresh}
             disabled={isLoading}
-            className="bg-gray-800 flex-row items-center px-4 py-2 rounded-xl"
-            style={{ opacity: isLoading ? 0.5 : 1 }}
+            className="flex-row items-center px-4 py-2 rounded-xl"
+            style={{
+              opacity: isLoading ? 0.5 : 1,
+              backgroundColor: theme === 'light' ? '#1f2937' : '#3b82f6',
+            }}
           >
             <Text className="text-white text-sm mr-2">{t('refresh')}</Text>
             <Ionicons name="refresh" size={18} color="white" />

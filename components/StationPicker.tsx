@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AirQualityItem, getGradeInfo } from '@/services/airQualityApi';
+import { useThemeStore, themes } from '@/store/themeStore';
 
 interface StationPickerProps {
   stations: AirQualityItem[];
@@ -22,6 +23,8 @@ export function StationPicker({
   onSelect,
 }: StationPickerProps) {
   const [modalVisible, setModalVisible] = useState(false);
+  const { theme } = useThemeStore();
+  const colors = themes[theme];
 
   const handleSelect = (station: AirQualityItem) => {
     onSelect(station);
@@ -31,8 +34,8 @@ export function StationPicker({
   if (!selectedStation) {
     return (
       <View className="flex-row items-center">
-        <Ionicons name="radio-outline" size={14} color="#9ca3af" />
-        <Text className="text-gray-400 ml-1 text-sm">측정소 없음</Text>
+        <Ionicons name="radio-outline" size={14} color={colors.textMuted} />
+        <Text className="ml-1 text-sm" style={{ color: colors.textMuted }}>측정소 없음</Text>
       </View>
     );
   }
@@ -43,11 +46,11 @@ export function StationPicker({
         onPress={() => setModalVisible(true)}
         className="flex-row items-center"
       >
-        <Ionicons name="radio-outline" size={14} color="#6b7280" />
-        <Text className="text-gray-600 ml-1 text-sm">
+        <Ionicons name="radio-outline" size={14} color={colors.textSecondary} />
+        <Text className="ml-1 text-sm" style={{ color: colors.textSecondary }}>
           {selectedStation.stationName}
         </Text>
-        <Ionicons name="chevron-down" size={14} color="#6b7280" />
+        <Ionicons name="chevron-down" size={14} color={colors.textSecondary} />
       </TouchableOpacity>
 
       <Modal
@@ -61,15 +64,16 @@ export function StationPicker({
           onPress={() => setModalVisible(false)}
         >
           <Pressable
-            className="bg-white rounded-t-3xl max-h-[70%]"
+            className="rounded-t-3xl max-h-[70%]"
+            style={{ backgroundColor: colors.background }}
             onPress={(e) => e.stopPropagation()}
           >
-            <View className="p-4 border-b border-gray-100">
-              <View className="w-10 h-1 bg-gray-300 rounded-full self-center mb-3" />
-              <Text className="text-lg font-bold text-gray-800 text-center">
+            <View className="p-4" style={{ borderBottomWidth: 1, borderBottomColor: colors.border }}>
+              <View className="w-10 h-1 rounded-full self-center mb-3" style={{ backgroundColor: colors.textMuted }} />
+              <Text className="text-lg font-bold text-center" style={{ color: colors.text }}>
                 측정소 선택
               </Text>
-              <Text className="text-gray-500 text-sm text-center mt-1">
+              <Text className="text-sm text-center mt-1" style={{ color: colors.textSecondary }}>
                 {stations.length}개 측정소
               </Text>
             </View>
@@ -88,20 +92,28 @@ export function StationPicker({
                 return (
                   <TouchableOpacity
                     onPress={() => handleSelect(item)}
-                    className={`flex-row items-center justify-between p-4 mb-2 rounded-xl ${
-                      isSelected ? 'bg-green-50 border border-green-400' : 'bg-gray-50'
-                    }`}
+                    className="flex-row items-center justify-between p-4 mb-2 rounded-xl"
+                    style={{
+                      backgroundColor: isSelected
+                        ? theme === 'light' ? '#dcfce7' : '#14532d'
+                        : colors.surface,
+                      borderWidth: isSelected ? 1 : 0,
+                      borderColor: '#4ade80',
+                    }}
                   >
                     <View className="flex-1">
                       <Text
-                        className={`font-semibold ${
-                          isSelected ? 'text-green-700' : 'text-gray-800'
-                        }`}
+                        className="font-semibold"
+                        style={{
+                          color: isSelected
+                            ? theme === 'light' ? '#15803d' : '#4ade80'
+                            : colors.text,
+                        }}
                       >
                         {item.stationName}
                       </Text>
                       {item.mangName && (
-                        <Text className="text-gray-500 text-xs mt-0.5">
+                        <Text className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                           {item.mangName}
                         </Text>
                       )}
@@ -109,14 +121,14 @@ export function StationPicker({
 
                     <View className="flex-row items-center gap-3">
                       <View className="items-end">
-                        <Text className="text-gray-500 text-xs">PM10</Text>
-                        <Text className="text-gray-800 font-medium">
+                        <Text className="text-xs" style={{ color: colors.textSecondary }}>PM10</Text>
+                        <Text className="font-medium" style={{ color: colors.text }}>
                           {item.pm10Value || '-'}
                         </Text>
                       </View>
                       <View className="items-end">
-                        <Text className="text-gray-500 text-xs">PM2.5</Text>
-                        <Text className="text-gray-800 font-medium">
+                        <Text className="text-xs" style={{ color: colors.textSecondary }}>PM2.5</Text>
+                        <Text className="font-medium" style={{ color: colors.text }}>
                           {item.pm25Value || '-'}
                         </Text>
                       </View>
@@ -133,7 +145,8 @@ export function StationPicker({
             <View className="p-4 pb-8">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className="bg-gray-800 py-4 rounded-xl items-center"
+                className="py-4 rounded-xl items-center"
+                style={{ backgroundColor: theme === 'light' ? '#1f2937' : '#3b82f6' }}
               >
                 <Text className="text-white font-semibold">닫기</Text>
               </TouchableOpacity>

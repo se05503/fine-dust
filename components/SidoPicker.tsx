@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SIDO_LIST, SidoName } from '@/services/airQualityApi';
+import { useThemeStore, themes } from '@/store/themeStore';
 
 interface SidoPickerProps {
   selectedSido: SidoName;
@@ -17,6 +18,8 @@ interface SidoPickerProps {
 
 export function SidoPicker({ selectedSido, onSelect }: SidoPickerProps) {
   const [modalVisible, setModalVisible] = useState(false);
+  const { theme } = useThemeStore();
+  const colors = themes[theme];
 
   const handleSelect = (sido: SidoName) => {
     onSelect(sido);
@@ -45,12 +48,13 @@ export function SidoPicker({ selectedSido, onSelect }: SidoPickerProps) {
           onPress={() => setModalVisible(false)}
         >
           <Pressable
-            className="bg-white rounded-t-3xl max-h-[70%]"
+            className="rounded-t-3xl max-h-[70%]"
+            style={{ backgroundColor: colors.background }}
             onPress={(e) => e.stopPropagation()}
           >
-            <View className="p-4 border-b border-gray-100">
-              <View className="w-10 h-1 bg-gray-300 rounded-full self-center mb-3" />
-              <Text className="text-lg font-bold text-gray-800 text-center">
+            <View className="p-4" style={{ borderBottomWidth: 1, borderBottomColor: colors.border }}>
+              <View className="w-10 h-1 rounded-full self-center mb-3" style={{ backgroundColor: colors.textMuted }} />
+              <Text className="text-lg font-bold text-center" style={{ color: colors.text }}>
                 지역 선택
               </Text>
             </View>
@@ -63,14 +67,16 @@ export function SidoPicker({ selectedSido, onSelect }: SidoPickerProps) {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleSelect(item)}
-                  className={`flex-1 m-1 py-3 rounded-xl items-center ${
-                    selectedSido === item ? 'bg-green-400' : 'bg-gray-100'
-                  }`}
+                  className="flex-1 m-1 py-3 rounded-xl items-center"
+                  style={{
+                    backgroundColor: selectedSido === item ? '#4ade80' : colors.surface,
+                  }}
                 >
                   <Text
-                    className={`font-medium ${
-                      selectedSido === item ? 'text-white' : 'text-gray-700'
-                    }`}
+                    className="font-medium"
+                    style={{
+                      color: selectedSido === item ? '#ffffff' : colors.text,
+                    }}
                   >
                     {item}
                   </Text>
@@ -81,7 +87,8 @@ export function SidoPicker({ selectedSido, onSelect }: SidoPickerProps) {
             <View className="p-4 pb-8">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className="bg-gray-800 py-4 rounded-xl items-center"
+                className="py-4 rounded-xl items-center"
+                style={{ backgroundColor: theme === 'light' ? '#1f2937' : '#3b82f6' }}
               >
                 <Text className="text-white font-semibold">닫기</Text>
               </TouchableOpacity>
