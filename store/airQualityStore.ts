@@ -12,6 +12,9 @@ import {
 // 실제 사용 시 .env 파일에 EXPO_PUBLIC_AIR_QUALITY_API_KEY 값을 설정하세요
 const API_KEY = process.env.EXPO_PUBLIC_AIR_QUALITY_API_KEY || '';
 
+// 에러 타입 정의
+export type ErrorType = 'network' | 'api_key' | 'general' | null;
+
 interface AirQualityState {
   // 데이터
   items: AirQualityItem[];
@@ -21,6 +24,7 @@ interface AirQualityState {
   // 상태
   isLoading: boolean;
   error: string | null;
+  errorType: ErrorType; // 에러 타입 추가
   lastUpdated: Date | null;
   isHydrated: boolean; // persist 로딩 완료 여부
   // 액션
@@ -41,6 +45,7 @@ export const useAirQualityStore = create<AirQualityState>()(
       selectedStationName: null,
       isLoading: false,
       error: null,
+      errorType: null,
       lastUpdated: null,
       isHydrated: false,
 
@@ -67,14 +72,14 @@ export const useAirQualityStore = create<AirQualityState>()(
 
         if (!API_KEY) {
           set({
-            error:
-              'API 키가 설정되지 않았습니다. .env 파일에 EXPO_PUBLIC_AIR_QUALITY_API_KEY를 설정하세요.',
+            error: 'api_key',
+            errorType: 'api_key',
             isLoading: false,
           });
           return;
         }
 
-        set({ isLoading: true, error: null });
+        set({ isLoading: true, error: null, errorType: null });
 
         try {
           const items = await fetchAirQuality({
@@ -111,20 +116,29 @@ export const useAirQualityStore = create<AirQualityState>()(
             visibilityTime: 2000,
           });
         } catch (error) {
-          const errorMessage =
-            error instanceof Error
-              ? error.message
-              : '데이터를 가져오는데 실패했습니다.';
+          // 네트워크 에러 판별
+          const isNetworkError =
+            error instanceof TypeError ||
+            (error instanceof Error &&
+              (error.message.includes('Network') ||
+                error.message.includes('fetch') ||
+                error.message.includes('network') ||
+                error.message.includes('Failed to fetch')));
+
+          const errorType = isNetworkError ? 'network' : 'general';
 
           set({
-            error: errorMessage,
+            error: errorType,
+            errorType: errorType,
             isLoading: false,
           });
 
           Toast.show({
             type: 'error',
             text1: '데이터 로드 실패',
-            text2: errorMessage,
+            text2: isNetworkError
+              ? '네트워크가 불안정합니다.'
+              : '데이터를 불러오는데 실패했습니다.',
             visibilityTime: 3000,
           });
         }

@@ -26,6 +26,7 @@ export default function Home() {
     selectedSido,
     isLoading,
     error,
+    errorType,
     lastUpdated,
     isHydrated,
     setSelectedSido,
@@ -176,8 +177,17 @@ export default function Home() {
 
         {/* Error State */}
         {error && (
-          <View className="bg-red-50 rounded-xl p-4 mt-4">
-            <Text className="text-red-600 text-sm">{error}</Text>
+          <View
+            className="rounded-xl p-4 mt-4"
+            style={{ backgroundColor: theme === 'light' ? '#fef2f2' : '#450a0a' }}
+          >
+            <Text className="text-sm" style={{ color: theme === 'light' ? '#dc2626' : '#fca5a5' }}>
+              {errorType === 'network'
+                ? t('networkError')
+                : errorType === 'api_key'
+                ? t('apiKeyError')
+                : t('dataLoadError')}
+            </Text>
           </View>
         )}
 

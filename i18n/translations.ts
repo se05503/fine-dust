@@ -38,6 +38,16 @@ export const translations = {
     refresh: '새로고침',
     measurementTime: '측정시간',
 
+    // Errors
+    networkError: '네트워크가 불안정합니다. 잠시 후 다시 시도해주세요.',
+    dataLoadError: '데이터를 불러오는데 실패했습니다.',
+    apiKeyError: 'API 키가 설정되지 않았습니다.',
+
+    // Toast
+    dataUpdateSuccess: '데이터 업데이트 완료',
+    dataUpdateSuccessMessage: '측정소 데이터를 불러왔습니다.',
+    dataLoadFail: '데이터 로드 실패',
+
     // Time
     am: '오전',
     pm: '오후',
@@ -85,6 +95,16 @@ export const translations = {
     refresh: 'Refresh',
     measurementTime: 'Measured at',
 
+    // Errors
+    networkError: 'Network is unstable. Please try again later.',
+    dataLoadError: 'Failed to load data.',
+    apiKeyError: 'API key is not configured.',
+
+    // Toast
+    dataUpdateSuccess: 'Data Updated',
+    dataUpdateSuccessMessage: 'Station data has been loaded.',
+    dataLoadFail: 'Data Load Failed',
+
     // Time
     am: 'AM',
     pm: 'PM',
@@ -131,6 +151,16 @@ export const translations = {
     lastUpdate: '最終更新',
     refresh: '更新',
     measurementTime: '測定時間',
+
+    // Errors
+    networkError: 'ネットワークが不安定です。しばらくしてからもう一度お試しください。',
+    dataLoadError: 'データの読み込みに失敗しました。',
+    apiKeyError: 'APIキーが設定されていません。',
+
+    // Toast
+    dataUpdateSuccess: 'データ更新完了',
+    dataUpdateSuccessMessage: '測定所のデータを読み込みました。',
+    dataLoadFail: 'データ読み込み失敗',
 
     // Time
     am: '午前',
