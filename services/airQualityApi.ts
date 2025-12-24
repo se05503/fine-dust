@@ -80,10 +80,10 @@ export interface AirQualityResponse {
 
 // 등급별 정보
 export const GRADE_INFO = {
-  '1': { label: '좋음', color: '#4ade80', bgColor: 'bg-green-400' },
-  '2': { label: '보통', color: '#60a5fa', bgColor: 'bg-blue-400' },
-  '3': { label: '나쁨', color: '#fbbf24', bgColor: 'bg-yellow-400' },
-  '4': { label: '매우나쁨', color: '#ef4444', bgColor: 'bg-red-500' },
+  '1': { labelKey: 'good', color: '#4ade80', bgColor: 'bg-green-400' },
+  '2': { labelKey: 'moderate', color: '#60a5fa', bgColor: 'bg-blue-400' },
+  '3': { labelKey: 'bad', color: '#fbbf24', bgColor: 'bg-yellow-400' },
+  '4': { labelKey: 'veryBad', color: '#ef4444', bgColor: 'bg-red-500' },
 } as const;
 
 export type GradeKey = keyof typeof GRADE_INFO;
@@ -143,7 +143,7 @@ export async function fetchAirQuality({
 // 등급 정보 가져오기 헬퍼
 export function getGradeInfo(grade: string | null) {
   if (!grade || !(grade in GRADE_INFO)) {
-    return { label: '-', color: '#9ca3af', bgColor: 'bg-gray-400' };
+    return { labelKey: 'unknown', color: '#9ca3af', bgColor: 'bg-gray-400' };
   }
   return GRADE_INFO[grade as GradeKey];
 }

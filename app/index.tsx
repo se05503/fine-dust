@@ -15,6 +15,8 @@ import { useAirQualityStore } from '@/store/airQualityStore';
 import { getGradeInfo } from '@/services/airQualityApi';
 import { SidoPicker } from '@/components/SidoPicker';
 import { StationPicker } from '@/components/StationPicker';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import { useLanguageStore } from '@/store/languageStore';
 
 export default function Home() {
   const {
@@ -30,6 +32,8 @@ export default function Home() {
     fetchData,
     refresh,
   } = useAirQualityStore();
+
+  const { language, t } = useLanguageStore();
 
   // 저장된 상태가 로드된 후 데이터 가져오기
   useEffect(() => {
@@ -48,15 +52,15 @@ export default function Home() {
     const grade = selectedItem?.khaiGrade;
     switch (grade) {
       case '1':
-        return { text: '야외 활동하기', highlight: '좋은 날', suffix: '이에요!' };
+        return t('recommendations.good');
       case '2':
-        return { text: '야외 활동', highlight: '무난한 날', suffix: '이에요.' };
+        return t('recommendations.moderate');
       case '3':
-        return { text: '야외 활동', highlight: '자제', suffix: '가 필요해요.' };
+        return t('recommendations.bad');
       case '4':
-        return { text: '외출을', highlight: '삼가', suffix: '세요!' };
+        return t('recommendations.veryBad');
       default:
-        return { text: '데이터를', highlight: '확인', suffix: ' 중이에요.' };
+        return t('recommendations.unknown');
     }
   };
 
@@ -67,7 +71,7 @@ export default function Home() {
     if (!lastUpdated) return '-';
     const hours = lastUpdated.getHours();
     const minutes = lastUpdated.getMinutes().toString().padStart(2, '0');
-    const period = hours >= 12 ? '오후' : '오전';
+    const period = hours >= 12 ? t('pm') : t('am');
     const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
     return `${period} ${displayHours.toString().padStart(2, '0')}:${minutes}`;
   };
@@ -156,6 +160,7 @@ export default function Home() {
             </View>
           </View>
           <View className="flex-row items-center gap-4 mt-2">
+            <LanguageSelector />
             <TouchableOpacity>
               <Ionicons name="moon-outline" size={22} color="#374151" />
             </TouchableOpacity>
@@ -173,7 +178,7 @@ export default function Home() {
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#4ade80" />
-            <Text className="text-gray-500 mt-4">데이터를 불러오는 중...</Text>
+            <Text className="text-gray-500 mt-4">{t('loadingData')}</Text>
           </View>
         ) : (
           <>
@@ -187,13 +192,13 @@ export default function Home() {
                   backgroundColor: gradeInfo.color,
                 }}
               >
-                <Text className="text-white text-sm">공기질</Text>
+                <Text className="text-white text-sm">{t('airQuality')}</Text>
                 <Text className="text-white text-5xl font-bold mt-2">
-                  {gradeInfo.label}
+                  {t(gradeInfo.labelKey)}
                 </Text>
                 {selectedItem?.khaiValue && selectedItem.khaiValue !== '-' && (
                   <Text className="text-white/80 text-sm mt-1">
-                    지수 {selectedItem.khaiValue}
+                    {t('index')} {selectedItem.khaiValue}
                   </Text>
                 )}
               </View>
@@ -212,7 +217,7 @@ export default function Home() {
                 }}
               >
                 <View className="flex-row items-center gap-1">
-                  <Text className="text-gray-600 text-sm">PM10</Text>
+                  <Text className="text-gray-600 text-sm">{t('pm10')}</Text>
                   <View
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: pm10GradeInfo.color }}
@@ -221,7 +226,7 @@ export default function Home() {
                 <Text className="text-gray-800 text-4xl font-bold mt-2">
                   {selectedItem?.pm10Value || '-'}
                 </Text>
-                <Text className="text-gray-500 text-sm mt-2">μg/m³</Text>
+                <Text className="text-gray-500 text-sm mt-2">{t('unit')}</Text>
               </View>
               <View
                 className="bg-white rounded-2xl items-center justify-center flex-1 py-6 shadow-sm"
@@ -234,7 +239,7 @@ export default function Home() {
                 }}
               >
                 <View className="flex-row items-center gap-1">
-                  <Text className="text-gray-600 text-sm">PM2.5</Text>
+                  <Text className="text-gray-600 text-sm">{t('pm25')}</Text>
                   <View
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: pm25GradeInfo.color }}
@@ -243,7 +248,7 @@ export default function Home() {
                 <Text className="text-gray-800 text-4xl font-bold mt-2">
                   {selectedItem?.pm25Value || '-'}
                 </Text>
-                <Text className="text-gray-500 text-sm mt-2">μg/m³</Text>
+                <Text className="text-gray-500 text-sm mt-2">{t('unit')}</Text>
               </View>
             </View>
 
@@ -277,7 +282,7 @@ export default function Home() {
             {/* Data Time */}
             {selectedItem?.dataTime && (
               <Text className="text-gray-400 text-xs text-center mt-3">
-                측정시간: {selectedItem.dataTime}
+                {t('measurementTime')}: {selectedItem.dataTime}
               </Text>
             )}
           </>
@@ -286,7 +291,7 @@ export default function Home() {
         {/* Footer */}
         <View className="flex-row items-center justify-between mt-auto mb-4">
           <Text className="text-gray-400 text-sm">
-            마지막 업데이트: {formatLastUpdated()}
+            {t('lastUpdate')}: {formatLastUpdated()}
           </Text>
           <TouchableOpacity
             onPress={refresh}
@@ -294,7 +299,7 @@ export default function Home() {
             className="bg-gray-800 flex-row items-center px-4 py-2 rounded-xl"
             style={{ opacity: isLoading ? 0.5 : 1 }}
           >
-            <Text className="text-white text-sm mr-2">새로고침</Text>
+            <Text className="text-white text-sm mr-2">{t('refresh')}</Text>
             <Ionicons name="refresh" size={18} color="white" />
           </TouchableOpacity>
         </View>
