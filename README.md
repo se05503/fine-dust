@@ -1,0 +1,2 @@
+- claude AI Tool을 이용해 만든 첫번째 앱, 미세먼지 앱
+- 개발 언어: React Native 
